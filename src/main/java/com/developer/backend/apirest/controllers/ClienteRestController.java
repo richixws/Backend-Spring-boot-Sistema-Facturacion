@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.developer.backend.apirest.dto.ClienteDto;
+import com.developer.backend.apirest.dto.RegionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
@@ -53,13 +55,13 @@ public class ClienteRestController {
 	
 	
 	@GetMapping("/clientes")
-	public List<Cliente> index(){
+	public List<ClienteDto> index(){
 		
 		return clienteserviceimpl.findAll();
 		
 	}
 	@GetMapping("/clientes/page/{page}")
-	public Page<Cliente> index(@PathVariable Integer page){
+	public Page<ClienteDto> index(@PathVariable Integer page){
 		
 		Pageable pageable=PageRequest.of(page, 4);
 		
@@ -71,7 +73,7 @@ public class ClienteRestController {
 	@GetMapping("/clientes/{id}")
 	public ResponseEntity<?> getClientById(@PathVariable Long id){
 		
-	     Cliente cliente=null;
+	     ClienteDto cliente=null;
 	     
 	     Map<String, Object> response=new HashMap<>();
 	     
@@ -94,26 +96,19 @@ public class ClienteRestController {
 	    	 
 		}
 		
-		return new ResponseEntity<Cliente>(cliente,HttpStatus.OK);
+		return new ResponseEntity<ClienteDto>(cliente,HttpStatus.OK);
 		
 	}
 	@Secured({"ROLE_ADMIN"})
 	@PostMapping("/clientes")
-	public ResponseEntity<?> saveClient(@Valid @RequestBody Cliente cliente ,BindingResult result) {
+	public ResponseEntity<?> saveClient(@Valid @RequestBody ClienteDto cliente ,BindingResult result) {
 		
-		Cliente clienteNew=null;
+		ClienteDto clienteNew=null;
 		
 		Map<String, Object> response=new HashMap<>();
 		
 		if (result.hasErrors()) {
-			
-			/*List<String> errors=new ArrayList<>();
-			
-			for (Fie																																																																																																																																																																																																																																																																ldError err : result.getFieldErrors()) {
-				
-				errors.add("el campo '"+err.getField()+"'"+err.getDefaultMessage());
-			}
-			*/
+
 			List<String> errors=result.getFieldErrors()
 					                  .stream().map(err-> "el campo '"+err.getField()+"'"+err.getDefaultMessage())
 					                  .collect(Collectors.toList());
@@ -141,11 +136,11 @@ public class ClienteRestController {
 	}
 	@Secured({"ROLE_ADMIN"})
 	@PutMapping("/clientes/{id}")
-	public ResponseEntity<?> updateClient(@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable Long id) {
+	public ResponseEntity<?> updateClient(@Valid @RequestBody ClienteDto cliente, BindingResult result, @PathVariable Long id) {
 		
-		Cliente clienteActual=clienteserviceimpl.findById(id);
+		ClienteDto clienteActual=clienteserviceimpl.findById(id);
 		
-		Cliente clienteUpload=null;
+		ClienteDto clienteUpload=null;
 		
 		Map<String, Object> response=new HashMap<>();
 		
@@ -198,7 +193,7 @@ public class ClienteRestController {
 		Map<String, Object> response=new HashMap<>();
 		try {
 			
-			Cliente cliente=clienteserviceimpl.findById(id);
+			ClienteDto cliente=clienteserviceimpl.findById(id);
 			
 			String nombreFotoAnterior=cliente.getFoto();
 			
@@ -224,7 +219,7 @@ public class ClienteRestController {
 		
 		Map<String, Object> response= new HashMap<>();
 		
-		Cliente cliente=clienteserviceimpl.findById(id);
+		ClienteDto cliente=clienteserviceimpl.findById(id);
 		
 		if(!archivo.isEmpty()) {
 			
@@ -283,10 +278,8 @@ public class ClienteRestController {
 	
 	@Secured({"ROLE_ADMIN"})
 	@GetMapping("clientes/regiones")
-	public List<Region> listarRegiones(){
-		
+	public List<RegionDto> listarRegiones(){
 		return clienteserviceimpl.findAllRegiones();
-		
 	}
 	
 }
